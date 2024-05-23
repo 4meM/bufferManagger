@@ -23,6 +23,7 @@ class buffer{
     void subirPagina();
     void imprimirBuffer();
     int LRU();
+    void terminar_proceso(string namePage);
 };
 
 

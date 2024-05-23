@@ -9,8 +9,6 @@ using namespace std;
 
 
 int main() {
-    ios::sync_with_stdio(0);
-    cin.tie(0);
     buffer mi_buffer(3);
     mi_buffer.subirPagina();
     mi_buffer.imprimirBuffer();
@@ -18,6 +16,8 @@ int main() {
     mi_buffer.imprimirBuffer();
     mi_buffer.subirPagina();
     mi_buffer.imprimirBuffer();
+    mi_buffer.terminar_proceso("B");
+    mi_buffer.terminar_proceso("A");
     mi_buffer.subirPagina();
     mi_buffer.imprimirBuffer();
 }

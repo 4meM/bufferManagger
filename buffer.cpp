@@ -26,6 +26,7 @@ int buffer :: isInTable(string indexPage){
 void buffer :: llenarFreeFrame (){
     FOR_LOOP(0, i, framesSize){
         FreeFrame.push(i);
+        
     }
 } 
 
@@ -66,6 +67,7 @@ void buffer :: subirPagina(){
         cin >> modo;
 
         int indice = LRU(); 
+
         if(modo == "escritura"){
             paginas[indice].actualizar(name, 1);
         } 
@@ -101,5 +103,12 @@ int buffer :: LRU(){
 void buffer :: imprimirBuffer (){
     FOR_LOOP(0, i, paginas.size()){
         cout <<paginas[i].frame_id << "," << paginas[i].dirty_bit <<", " << paginas[i].hora << ", " <<paginas[i].pag_id << ", " <<paginas[i].pin_count << "\n";
+    }
+}
+
+void buffer :: terminar_proceso(string namePage){
+    int index = isInTable(namePage);        
+    if(index != -1){
+        paginas[index].decrecer_pin();
     }
 }
