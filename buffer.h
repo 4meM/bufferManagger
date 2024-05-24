@@ -17,6 +17,7 @@ class buffer{
     vector<Page> paginas;
     queue<int> FreeFrame;
     buffer(int);
+    void run();
     int isInTable(string namePage);
     void llenarFreeFrame();
     void crearPagina();

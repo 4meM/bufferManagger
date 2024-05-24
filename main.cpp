@@ -9,15 +9,12 @@ using namespace std;
 
 
 int main() {
-    buffer mi_buffer(3);
-    mi_buffer.subirPagina();
-    mi_buffer.imprimirBuffer();
-    mi_buffer.subirPagina();
-    mi_buffer.imprimirBuffer();
-    mi_buffer.subirPagina();
-    mi_buffer.imprimirBuffer();
-    mi_buffer.terminar_proceso("B");
-    mi_buffer.terminar_proceso("A");
-    mi_buffer.subirPagina();
-    mi_buffer.imprimirBuffer();
+    int sizeFrames;
+    cout << "Ingresa el numero de frames en tu Buffer Pool\n";
+    cin >> sizeFrames;
+    cin.ignore();
+    buffer mi_buffer(sizeFrames);
+    mi_buffer.run();
+    //mi_buffer.subirPagina();
+    //mi_buffer.imprimirBuffer();
 }
