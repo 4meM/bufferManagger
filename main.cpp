@@ -5,7 +5,7 @@
 #define FOR_LOOP(val,i, len) for (int i = val; i < len; ++i)
 #define REVERSE_FOR_LOPP(i, start, end) for(int i = (end) - 1; i >= start; i--)
 using namespace std;
-#include "buffer.h"
+#include "bufferM.h"
 
 
 int main() {
@@ -15,6 +15,4 @@ int main() {
     cin.ignore();
     buffer mi_buffer(sizeFrames);
     mi_buffer.run();
-    //mi_buffer.subirPagina();
-    //mi_buffer.imprimirBuffer();
 }

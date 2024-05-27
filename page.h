@@ -10,8 +10,6 @@
 #define REVERSE_FOR_LOPP(i, start, end) for(int i = (end) - 1; i >= start; i--)
 using namespace std;
 
-
-
 class Page{
     public:
     int frame_id;
@@ -19,11 +17,11 @@ class Page{
     int pin_count;
     bool dirty_bit;
     time_t hora;
-    Page (string name, int frame_id, int EO);
-    void increment_pin();
-    void decrecer_pin();
-    void cambiar_dirty();
-    void actualizar(string name, int EO);
+    Page (string name, int frame_id, int EO); //AUTOR: SEBASTIAN
+    void incrementar_pin(); // AUTOR: ERIK
+    void decrecer_pin(); // AUTOR: ERIK
+    void cambiar_dirty(); //AUTOR: ERIK
+    void actualizarPage(string name, int EO); //AUTOR: KERIN
     
 };
 

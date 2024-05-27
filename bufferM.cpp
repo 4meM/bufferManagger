@@ -7,15 +7,15 @@
 #define FOR_LOOP(val,i, len) for (int i = val; i < len; ++i)
 #define REVERSE_FOR_LOPP(i, start, end) for(int i = (end) - 1; i >= start; i--)
 using namespace std;
-#include "buffer.h"
+#include "bufferM.h"
 
-buffer :: buffer(int frames){
+buffer :: buffer(int frames){ // DEFINE EL TAMA;O FIJO DE LOS FRAMES E INICIALIZA UNA COLA CON LOS FRAMES LIBRES
     this -> framesSize = frames;
     llenarFreeFrame();
 }
 
 
-int buffer :: isInTable(string indexPage){
+int buffer :: isInTable(string indexPage){ // VERIFICA SI LA PAGINA ESTA EN LA PAGE TABLE Y REGRESA SU POSICION O -1 SI NO SE ENCUENTRA
     FOR_LOOP(0, i, paginas.size()){
         if(paginas[i].pag_id == indexPage){
             return i;
@@ -24,14 +24,14 @@ int buffer :: isInTable(string indexPage){
     return -1;
 }
 
-void buffer :: llenarFreeFrame (){
+void buffer :: llenarFreeFrame (){ //INICIALIZA UNA COLA CON LOS FRAMES LIBRES(AL INICIO SON TODOS LIBRES)
     FOR_LOOP(0, i, framesSize){
         FreeFrame.push(i);
         
     }
 } 
 
-void buffer :: crearPagina (){
+void buffer :: crearPagina (){ //SUBE UNA PAGINA AL BUFFER POOL CUANDO AUN HAY FRAMES LIBRES
     string namePag;
     string modo;
     cout << "Nombre de la pagina a subir\n";
@@ -39,7 +39,6 @@ void buffer :: crearPagina (){
     cout << "En que modo desea la pagina(Escritura o Lectura)\n";
     getline(cin,modo);
     if(isInTable(namePag) == -1){
-        
         if(modo == "escritura"){
             paginas.push_back(Page(namePag,FreeFrame.front(),1));
         } 
@@ -50,14 +49,16 @@ void buffer :: crearPagina (){
         FreeFrame.pop();
     }
     else{
-        paginas[isInTable(namePag)].increment_pin();
+        paginas[isInTable(namePag)].incrementar_pin();
+        cout << "\nentre al else\n";
         if(modo == "escritura"){
             paginas[isInTable(namePag)].cambiar_dirty();
+            cout << "\n Entro al if \n"; 
         }
     }
 }
 
-void buffer :: subirPagina(){
+void buffer :: subirPagina(){ //SE ENCARGA DE SUBIR UNA PAGINA AL BUFFER POOL
     if(FreeFrame.empty()){
         string name;
         string modo;
@@ -67,16 +68,24 @@ void buffer :: subirPagina(){
         cin >> modo;
         if(isInTable(name) == -1){
             int indice = LRU(); 
-
-            if(modo == "escritura"){
-                paginas[indice].actualizar(name, 1);
-            } 
+            if(indice != -1){
+                if(modo == "escritura"){
+                    paginas[indice].actualizarPage(name, 1);
+                } 
+                else{
+                    paginas[indice].actualizarPage(name, 0);
+                }
+            }
             else{
-                paginas[indice].actualizar(name, 0);
+                cout << "\nTERMINA PROCESOS, NINGUNA PAGINA TIENE PINCOUNT = 0\n";
             }
         }
         else{
-            paginas[isInTable(name)].increment_pin();
+            paginas[isInTable(name)].incrementar_pin();
+            if(modo == "escritura"){
+                paginas[isInTable(name)].dirty_bit = 1;
+            }
+
         }
     }
     else{
@@ -84,18 +93,16 @@ void buffer :: subirPagina(){
     }
 }
 
-int buffer :: LRU(){
+int buffer :: LRU(){ //POLITICA DE REEMPLAZO A LA PAGINA MAS ANTIGUA CON PINCOUNT = 0;
     vector<Page> pin;
     FOR_LOOP(0, i, paginas.size()){
         if(paginas[i].pin_count == 0){
             pin.push_back(paginas[i]);
         }
     }
-    FOR_LOOP(0, i, pin.size()){
-        cout << pin[i].pag_id << " ";
+    if(pin.empty()){
+        return -1;
     }
-    cout << endl;
-
     time_t actualH = time(0);
     int max = 0; 
     int index;
@@ -108,7 +115,7 @@ int buffer :: LRU(){
     return index;
 }
 
-void buffer :: imprimirBuffer (){
+void buffer :: imprimirBuffer (){ // IMPRIME TODAS LA PAGINAS QUE ESTAN EN EL BUFFER
         cout<< left << setw(10) << "frame_id"
             << left << setw(10) << "dirty_bit"
             << left << setw(15) << "Hora"
@@ -125,39 +132,39 @@ void buffer :: imprimirBuffer (){
     }
 }
 
-void buffer :: terminar_proceso(string namePage){
+void buffer :: terminar_proceso(string namePage){ //ACABA LA SOLICITUD DE UNA PAGINA DISMINUYENDO SU PINCOUNT
     int index = isInTable(namePage);        
     if(index != -1){
         paginas[index].decrecer_pin();
     }
 }
 
-void buffer :: run(){
+void buffer :: run(){ //INTERFAZ CON LAS FUNCIONES NECESARIAS PARA OPERAR EL BUFFER 
     while(true){
         cout <<"\n";
         cout << "-------------------------------------------------------\n";
-        cout << "Desea usar una pagina? SI(1) NO(0)\n";
-        cout << "Desea terminar un proceso(2)\n";
-        int valor;
-        cout << "Ingresa tu opcion: "; cin >> valor;
+        cout << "DESEA SALIR DEL BUFFER MANAGGER? SI(0)\n";
+        cout << "DESEA SUBIR UNA PAGINA? SI(1)\n";
+        cout << "DESEA TERMINAR UN PROCESO? SI(2)\n";
+        int opcion;
+        cout << "Ingresa tu opcion: "; cin >> opcion;
         cout << "-------------------------------------------------------\n";
         cin.ignore();
-        if(valor == 1){
+        if(opcion == 1){
             subirPagina();
-            cout << "Pagina subida\n";
             cout << "\n\n";    
             cout << "****************************************************\n\n";
             
             imprimirBuffer();
             cout << "\n\n****************************************************\n";
         }
-        else if(valor == 2){
+        else if(opcion == 2){
             cout << "Ingresa el nombre del proceso que desea terminar\n";
             string namePro;
             cin >> namePro;
             cin.ignore();
             terminar_proceso(namePro);
-            cout << "Se finalizo el proceso " << namePro << "\n";
+            cout << "SE FINALIZO EL PROCESO -> " << namePro << "\n";
             cout << "\n\n";
             cout << "**************************************************\n\n";
             imprimirBuffer();
@@ -165,8 +172,12 @@ void buffer :: run(){
             cout << "\n";
         }
 
-        else{
+        else if(opcion == 0){
+            cout << "\nSALIENDO DEL BUFFER MANAGER QUE TENGA BUEN DIA! :D\n";
             break;    
+        }
+        else{
+            cout << "\nESA OPCION NO ESTA DISPONIBLE\n";
         }
     }
 }
