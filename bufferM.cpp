@@ -50,15 +50,13 @@ void buffer :: crearPagina (){ //SUBE UNA PAGINA AL BUFFER POOL CUANDO AUN HAY F
     }
     else{
         paginas[isInTable(namePag)].incrementar_pin();
-        cout << "\nentre al else\n";
         if(modo == "escritura"){
             paginas[isInTable(namePag)].cambiar_dirty();
-            cout << "\n Entro al if \n"; 
         }
     }
 }
 
-void buffer :: subirPagina(){ //SE ENCARGA DE SUBIR UNA PAGINA AL BUFFER POOL
+void buffer :: subirPagina(){ //SE ENCARGA DE SUBIR UNA PAGINA AL BUFFER POOL, INDEPENDIENTEMENTE DE SI HAY O NO HAY ESPACIO EN EL BP
     if(FreeFrame.empty()){
         string name;
         string modo;
@@ -84,6 +82,7 @@ void buffer :: subirPagina(){ //SE ENCARGA DE SUBIR UNA PAGINA AL BUFFER POOL
             paginas[isInTable(name)].incrementar_pin();
             if(modo == "escritura"){
                 paginas[isInTable(name)].dirty_bit = 1;
+                paginas[isInTable(name)].hora = time(0);
             }
 
         }
